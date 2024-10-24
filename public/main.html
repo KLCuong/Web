@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Student Management</h1>
+
+    <h2>Add Student</h2>
+    <form id="addStudentForm">
+        <label for="studentId">Student ID:</label>
+        <input type="number" id="studentId" required>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+
+        <label for="dateOfBirth">Date of Birth:</label>
+        <input type="date" id="dateOfBirth" required>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" required>
+
+        <button type="submit">Add Student</button>
+    </form>
+
+    <h2>All Students</h2>
+    <button id="loadStudents">Load Students</button>
+    <table>
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Date of Birth</th>
+                <th>Address</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="studentList">
+        </tbody>
+    </table>
+
+    <h2>Update Student</h2>
+    <form id="updateStudentForm">
+        <label for="updateStudentId">Student ID to Update:</label>
+        <input type="number" id="updateStudentId" required>
+
+        <label for="newName">New Name:</label>
+        <input type="text" id="newName">
+
+        <label for="newDateOfBirth">New Date of Birth:</label>
+        <input type="date" id="newDateOfBirth">
+
+        <label for="newAddress">New Address:</label>
+        <input type="text" id="newAddress">
+
+        <button type="submit">Update Student</button>
+    </form>
+
+    <script>
+        // Load all students
+        document.getElementById('loadStudents').addEventListener('click', async () => {
+            const response = await fetch('/api/findall');
+            const students = await response.json();
+            const studentList = document.getElementById('studentList');
+            studentList.innerHTML = '';
+
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.StudentId}</td>
+                    <td>${student.Name}</td>
+                    <td>${new Date(student.Date).toLocaleDateString()}</td>
+                    <td>${student.Address}</td>
+                    <td>
+                        <button class="updateBtn" data-id="${student.StudentId}">Update</button>
+                        <button class="deleteBtn" data-id="${student._id}">Delete</button>
+                    </td>
+                `;
+                studentList.appendChild(row);
+            });
+
+            // Attach delete event
+            document.querySelectorAll('.deleteBtn').forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    const id = event.target.getAttribute('data-id');
+                    const response = await fetch(`/api/delete/${id}`, { method: 'DELETE' });
+                    if (response.ok) {
+                        alert("Student deleted successfully!");
+                        document.getElementById('loadStudents').click(); // Reload students
+                    } else {
+                        alert("Error deleting student");
+                    }
+                });
+            });
+
+            // Attach update event
+            document.querySelectorAll('.updateBtn').forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    const studentId = event.target.getAttribute('data-id');
+                    document.getElementById('updateStudentId').value = studentId;
+                });
+            });
+        });
+
+        // Add student
+        document.getElementById('addStudentForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const studentData = {
+                StudentId: document.getElementById('studentId').value,
+                Name: document.getElementById('name').value,
+                Date: document.getElementById('dateOfBirth').value,
+                Address: document.getElementById('address').value
+            };
+
+            const response = await fetch('/api/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(studentData)
+            });
+
+            if (response.ok) {
+                alert("Student added successfully!");
+                document.getElementById('addStudentForm').reset();
+            } else {
+                alert("Error adding student");
+            }
+        });
+
+        // Update student
+        document.getElementById('updateStudentForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const studentId = document.getElementById('updateStudentId').value;
+
+            // Fetch student _id based on StudentId
+            const responseFind = await fetch(`/api/findStudentId/${studentId}`);
+            const student = await responseFind.json();
+            const id = student._id;  // Use _id for the update
+
+            const updatedData = {
+                Name: document.getElementById('newName').value,
+                Date: document.getElementById('newDateOfBirth').value,
+                Address: document.getElementById('newAddress').value
+            };
+
+            const responseUpdate = await fetch(`/api/update/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (responseUpdate.ok) {
+                alert("Student updated successfully!");
+                document.getElementById('updateStudentForm').reset();
+                document.getElementById('loadStudents').click(); // Reload students
+            } else {
+                alert("Error updating student");
+            }
+        });
+    </script>
+
+</body>
+</html>

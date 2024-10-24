@@ -1,0 +1,118 @@
+/* Định dạng chung cho body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+/* Định dạng cho tiêu đề */
+h1, h2 {
+    color: #333;
+}
+
+/* Form điều chỉnh */
+form {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Label và input */
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input {
+    width: 400px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Nút (button) */
+button {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Bảng danh sách sinh viên */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #007BFF;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Nút trong bảng */
+table button {
+    width: auto;
+    padding: 5px 10px;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.updateBtn {
+    background-color: #28a745;
+}
+
+.updateBtn:hover {
+    background-color: #218838;
+}
+
+.deleteBtn {
+    background-color: #dc3545;
+}
+
+.deleteBtn:hover {
+    background-color: #c82333;
+}
+
+/* Định dạng responsive */
+@media screen and (max-width: 600px) {
+    input, button {
+        width: 100%;
+    }
+    
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100%;
+    }
+
+    th {
+        text-align: left;
+    }
+}
